@@ -4452,3 +4452,142 @@ input:focus-visible {
 
     box-shadow: none !important;
 }
+/* =========================================================
+   MAP CONTROLS — CLEAN & CLEAR
+   ========================================================= */
+
+.floating-controls {
+    position: absolute !important;
+
+    top: 16px !important;
+    left: 16px !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+
+    gap: 8px !important;
+
+    padding: 8px !important;
+
+    width: 52px !important;
+
+    background: rgba(255, 255, 255, 0.96) !important;
+
+    border: 1px solid #dbe3ea !important;
+
+    border-radius: 12px !important;
+
+    box-shadow: 0 6px 20px rgba(15, 39, 68, 0.12) !important;
+
+    z-index: 500 !important;
+}
+
+
+/* Every map control button */
+
+.floating-controls .control-btn {
+    width: 42px !important;
+    height: 42px !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 !important;
+
+    background: #ffffff !important;
+
+    border: 1px solid #dce4eb !important;
+
+    border-radius: 9px !important;
+
+    color: #193a60 !important;
+
+    font-size: 20px !important;
+
+    font-weight: 500 !important;
+
+    line-height: 1 !important;
+
+    box-shadow: none !important;
+
+    cursor: pointer !important;
+
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        transform 0.15s ease !important;
+}
+
+
+/* Hover */
+
+.floating-controls .control-btn:hover {
+    background: #f0f8f9 !important;
+
+    border-color: #8fcfd1 !important;
+
+    color: #0e8f92 !important;
+
+    transform: translateY(-1px) !important;
+}
+
+
+/* Active */
+
+.floating-controls .control-btn:active {
+    transform: translateY(0) !important;
+
+    background: #e7f4f5 !important;
+}
+
+
+/* Separators */
+
+.floating-controls .control-divider {
+    width: 30px !important;
+
+    height: 1px !important;
+
+    margin: 2px 0 !important;
+
+    background: #e4e9ee !important;
+}
+
+
+/* Make + and − especially clear */
+
+.floating-controls .control-btn:first-child {
+    font-size: 24px !important;
+}
+
+.floating-controls .control-btn:nth-child(2) {
+    font-size: 24px !important;
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    .floating-controls {
+        top: 10px !important;
+        left: 10px !important;
+
+        width: 48px !important;
+
+        padding: 6px !important;
+
+        gap: 6px !important;
+    }
+
+    .floating-controls .control-btn {
+        width: 36px !important;
+        height: 36px !important;
+
+        font-size: 18px !important;
+    }
+}

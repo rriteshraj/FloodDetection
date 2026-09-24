@@ -4591,3 +4591,107 @@ input:focus-visible {
         font-size: 18px !important;
     }
 }
+/* =========================================================
+   CUSTOM MAP CONTROLS
+   ========================================================= */
+
+.floating-controls {
+    position: absolute !important;
+
+    top: 18px !important;
+    right: 18px !important;
+    left: auto !important;
+
+    z-index: 600 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+
+    width: 46px !important;
+
+    padding: 5px !important;
+
+    gap: 5px !important;
+
+    background: rgba(255, 255, 255, 0.96) !important;
+
+    border: 1px solid #dce4eb !important;
+
+    border-radius: 11px !important;
+
+    box-shadow: 0 5px 18px rgba(15, 39, 68, 0.13) !important;
+}
+
+
+/* Individual buttons */
+
+.floating-controls .control-btn {
+    width: 36px !important;
+    height: 36px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 !important;
+
+    border: 1px solid #e1e7ed !important;
+
+    border-radius: 8px !important;
+
+    background: #ffffff !important;
+
+    color: #193a60 !important;
+
+    font-size: 16px !important;
+
+    cursor: pointer !important;
+
+    box-shadow: none !important;
+}
+
+
+/* Hover */
+
+.floating-controls .control-btn:hover {
+    background: #eef7f8 !important;
+
+    border-color: #9dd1d3 !important;
+
+    color: #087f82 !important;
+}
+
+
+/* Divider */
+
+.floating-controls .control-divider {
+    width: 28px !important;
+
+    height: 1px !important;
+
+    margin: 3px 0 !important;
+
+    background: #dfe6ec !important;
+}
+
+
+/* Zoom buttons */
+
+#zoomInBtn,
+#zoomOutBtn {
+    font-size: 19px !important;
+
+    font-weight: 500 !important;
+}
+
+
+/* Mobile */
+
+@media (max-width: 800px) {
+
+    .floating-controls {
+        top: 12px !important;
+        right: 12px !important;
+    }
+}

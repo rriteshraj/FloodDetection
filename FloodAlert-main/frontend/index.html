@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flood Detection System</title>
+    <!-- Leaflet.js Map Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <!-- Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Authentication Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-container">
+            <button class="close-auth" id="closeAuthBtn">×</button>
+            <h2 class="auth-title">Flood Detection System</h2>
+            <p class="auth-subtitle">Login to access flood risk analysis</p>
+            
+            <!-- Login Form -->
+            <form id="loginForm" class="login-form">
+                <input 
+                    type="email" 
+                    id="emailInput" 
+                    placeholder="Enter your email" 
+                    required
+                    class="auth-input"
+                >
+                <input 
+                    type="password" 
+                    id="passwordInput" 
+                    placeholder="Enter your password" 
+                    required
+                    class="auth-input"
+                >
+                <button type="submit" class="auth-btn">Login with Email</button>
+            </form>
+            
+            <div class="auth-divider">OR</div>
+            
+            <!-- Google Sign-In -->
+            <div id="googleSignInBtn" class="google-signin"></div>
+            
+            <p class="auth-footer">Demo: Use any email/password to continue</p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="logo-section">
+                    <div class="logo">💧</div>
+                    <div class="branding">
+                        <h1 class="title">FloodAlert</h1>
+                        <p class="tagline">Real-time Risk Analysis System</p>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button id="darkModeBtn" class="theme-toggle" title="Toggle Dark Mode">🌙</button>
+                <button id="safetyBtn" class="safety-tips-btn" title="Safety Instructions">
+                    <span class="safety-icon">🛟</span>
+                    <span class="safety-text">Safety</span>
+                </button>
+                <button id="emergencyBtn" class="emergency-sos-btn" title="Emergency Contacts">
+                    <span class="sos-icon">🚨</span>
+                    <span class="sos-text">SOS</span>
+                    <span class="sos-pulse"></span>
+                </button>
+                <button id="reportBtn" class="report-btn" title="Generate Report">
+                    <span class="report-icon">📋</span>
+                    <span class="report-text">Report</span>
+                </button>
+                <button id="favoritesBtn" class="favorites-btn" title="Favorites">
+                    <span class="favorites-icon">❤️</span>
+                    <span class="favorites-text">Favorites</span>
+                </button>
+                <button id="profileBtn" class="profile-btn" title="User Profile">
+                    <span class="profile-indicator"></span>
+                    <span id="userInitial">👤</span>
+                    <span id="userName">Profile</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Safety Instructions Dropdown -->
+    <div id="safetyDropdown" class="safety-dropdown hidden">
+        <div class="safety-dropdown-header">
+            <h3>🛟 Safety Instructions</h3>
+            <p>Prepare & Stay Safe During Floods</p>
+        </div>
+        <div class="safety-dropdown-divider"></div>
+        <div class="safety-content">
+            <!-- Before Flood -->
+            <div class="safety-section">
+                <h4 class="safety-subtitle">📋 Before a Flood</h4>
+                <ul class="safety-list">
+                    <li><strong>Emergency Kit:</strong> Keep water, first aid, flashlights, batteries</li>
+                    <li><strong>Documents:</strong> Store passports, IDs, insurance papers in waterproof bag</li>
+                    <li><strong>Medications:</strong> Stock 2-week supply + prescriptions</li>
+                    <li><strong>Cash:</strong> Keep emergency cash at home</li>
+                    <li><strong>Contact List:</strong> Write down emergency numbers</li>
+                    <li><strong>Plan Route:</strong> Know evacuation routes & safe zones</li>
+                </ul>
+            </div>
+
+            <!-- During Flood -->
+            <div class="safety-section">
+                <h4 class="safety-subtitle">⚠️ During a Flood</h4>
+                <ul class="safety-list">
+                    <li><strong>Move Up:</strong> Go to higher floors or roof immediately</li>
+                    <li><strong>Turn Off:</strong> Shut off gas & electricity if safe</li>
+                    <li><strong>Don't Drive:</strong> Never cross flooded roads (even shallow areas)</li>
+                    <li><strong>Stay Inside:</strong> Remain indoors away from windows</li>
+                    <li><strong>Listen Alert:</strong> Follow official radio/TV broadcasts</li>
+                    <li><strong>Help Others:</strong> Assist elderly & disabled neighbors if safe</li>
+                </ul>
+            </div>
+
+            <!-- Safe Shelter Locations -->
+            <div class="safety-section">
+                <h4 class="safety-subtitle">🏘️ Where to Take Shelter</h4>
+                <div class="shelter-locations">
+                    <div class="shelter-item">
+                        <span class="shelter-icon">🏫</span>
+                        <div class="shelter-info">
+                            <p class="shelter-name">Schools & Colleges</p>
+                            <p class="shelter-detail">Usually on higher ground, designed as evacuation centers</p>
+                        </div>
+                    </div>
+                    <div class="shelter-item">
+                        <span class="shelter-icon">🏥</span>
+                        <div class="shelter-info">
+                            <p class="shelter-name">Hospitals & Health Centers</p>
+                            <p class="shelter-detail">Medical support available, elevated locations</p>
+                        </div>
+                    </div>
+                    <div class="shelter-item">
+                        <span class="shelter-icon">⛪</span>
+                        <div class="shelter-info">
+                            <p class="shelter-name">Temples, Mosques, Churches</p>
+                            <p class="shelter-detail">Community shelters, often have supplies</p>
+                        </div>
+                    </div>
+                    <div class="shelter-item">
+                        <span class="shelter-icon">🏛️</span>
+                        <div class="shelter-info">
+                            <p class="shelter-name">Government Buildings</p>
+                            <p class="shelter-detail">Municipal offices, police stations, fire stations</p>
+                        </div>
+                    </div>
+                    <div class="shelter-item">
+                        <span class="shelter-icon">🏨</span>
+                        <div class="shelter-info">
+                            <p class="shelter-name">Hotels on Higher Ground</p>
+                            <p class="shelter-detail">Urban hotels often have emergency facilities</p>
+                        </div>
+                    </div>
+                    <div class="shelter-item">
+                        <span class="shelter-icon">🏞️</span>
+                        <div class="shelter-info">
+                            <p class="shelter-name">Higher Elevations</p>
+                            <p class="shelter-detail">Open spaces on hills, hilltops, elevated platforms</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- After Flood -->
+            <div class="safety-section">
+                <h4 class="safety-subtitle">✅ After Flood Recedes</h4>
+                <ul class="safety-list">
+                    <li><strong>Check Safety:</strong> Inspect home for structural damage</li>
+                    <li><strong>Boil Water:</strong> Use only boiled/bottled water for drinking</li>
+                    <li><strong>Clean Thoroughly:</strong> Disinfect affected areas with bleach</li>
+                    <li><strong>Dispose Safely:</strong> Remove contaminated items properly</li>
+                    <li><strong>Get Medical Check:</strong> Watch for disease symptoms</li>
+                    <li><strong>Report Damage:</strong> Contact insurance & local authorities</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Contacts Dropdown -->
+    <div id="emergencyDropdown" class="emergency-dropdown hidden">
+        <div class="emergency-dropdown-header">
+            <h3>🚨 Emergency Contacts</h3>
+            <p>Quick access to emergency services</p>
+        </div>
+        <div class="emergency-dropdown-divider"></div>
+        <div class="emergency-list">
+            <div class="emergency-item" onclick="window.location.href='tel:102'">
+                <span class="emergency-item-icon">🚑</span>
+                <div class="emergency-item-info">
+                    <p class="emergency-item-name">Ambulance</p>
+                    <p class="emergency-item-number">📞 102</p>
+                </div>
+                <span class="emergency-call-btn">Call</span>
+            </div>
+            <div class="emergency-item" onclick="window.location.href='tel:100'">
+                <span class="emergency-item-icon">🚔</span>
+                <div class="emergency-item-info">
+                    <p class="emergency-item-name">Police</p>
+                    <p class="emergency-item-number">📞 100</p>
+                </div>
+                <span class="emergency-call-btn">Call</span>
+            </div>
+            <div class="emergency-item" onclick="window.location.href='tel:101'">
+                <span class="emergency-item-icon">🚒</span>
+                <div class="emergency-item-info">
+                    <p class="emergency-item-name">Fire Department</p>
+                    <p class="emergency-item-number">📞 101</p>
+                </div>
+                <span class="emergency-call-btn">Call</span>
+            </div>
+            <div class="emergency-item" onclick="window.location.href='tel:1070'">
+                <span class="emergency-item-icon">☎️</span>
+                <div class="emergency-item-info">
+                    <p class="emergency-item-name">Disaster Management</p>
+                    <p class="emergency-item-number">📞 1070</p>
+                </div>
+                <span class="emergency-call-btn">Call</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Favorites Dropdown -->
+    <div id="favoritesDropdown" class="favorites-dropdown hidden">
+        <div class="favorites-dropdown-header">
+            <h3>❤️ Saved Locations</h3>
+        </div>
+        <div class="favorites-dropdown-divider"></div>
+        <div id="favoritesDropdownList" class="favorites-dropdown-list">
+            <p style="padding: 15px; text-align: center; color: #999;">No saved locations yet</p>
+        </div>
+    </div>
+
+    <!-- User Profile Dropdown -->
+    <div id="profileDropdown" class="profile-dropdown hidden">
+        <div class="profile-header">
+            <div class="profile-avatar" id="profileAvatar">👤</div>
+            <div class="profile-info">
+                <h4 id="profileName">User Name</h4>
+                <p id="profileEmail">user@email.com</p>
+            </div>
+        </div>
+        <div class="profile-divider"></div>
+        <button id="darkModeMenuBtn" class="profile-menu-item">🌙 Dark Mode</button>
+        <button id="profileLink" class="profile-menu-item" data-modal="profile">📋 My Profile</button>
+        <button id="settingsLink" class="profile-menu-item" data-modal="settings">⚙️ Settings</button>
+        <button id="helpLink" class="profile-menu-item" data-modal="help">❓ Help & Support</button>
+        <button id="aboutLink" class="profile-menu-item" data-modal="about">ℹ️ About</button>
+        <div class="profile-divider"></div>
+        <button id="logoutBtn" class="profile-menu-item logout">🚪 Logout</button>
+    </div>
+
+    <!-- Modal Pages -->
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 My Profile</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-section">
+                    <div class="profile-large-avatar" id="profileLargeAvatar">👤</div>
+                    <div class="profile-details">
+                        <p><strong>Name:</strong> <span id="modalProfileName">John Doe</span></p>
+                        <p><strong>Email:</strong> <span id="modalProfileEmail">john@example.com</span></p>
+                        <p><strong>Member Since:</strong> <span id="memberSince">Jan 2024</span></p>
+                        <p><strong>Total Searches:</strong> <span id="totalSearches">0</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ Settings</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-group">
+                    <label class="setting-item">
+                        <input type="checkbox" id="notificationToggle" checked>
+                        <span>Enable Notifications</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="checkbox" id="soundToggle" checked>
+                        <span>Alert Sounds</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span>Dark Mode</span>
+                    </label>
+                </div>
+                <div class="settings-group">
+                    <h3>Alert Preferences</h3>
+                    <label class="setting-item">
+                        <input type="radio" name="alertLevel" value="all" checked>
+                        <span>All Risk Levels</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="radio" name="alertLevel" value="medium">
+                        <span>Medium & High Only</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="radio" name="alertLevel" value="high">
+                        <span>High Risk Only</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help & Support Modal -->
+    <div id="helpModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>❓ Help & Support</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h3>How to Use</h3>
+                    <ul>
+                        <li>Enter a city name or coordinates in the search box</li>
+                        <li>Click "Detect Flood Risk" to analyze</li>
+                        <li>View results on the map with color-coded markers</li>
+                        <li>Save locations to favorites for quick access</li>
+                    </ul>
+                </div>
+                <div class="help-section">
+                    <h3>Risk Levels</h3>
+                    <p><strong>🔴 High Risk:</strong> Severe flood danger - Evacuate if instructed</p>
+                    <p><strong>🟠 Medium Risk:</strong> Moderate danger - Stay alert and prepare</p>
+                    <p><strong>🟢 Low Risk:</strong> Minimal threat - Monitor updates</p>
+                </div>
+                <div class="help-section">
+                    <h3>Contact Support</h3>
+                    <p>Email: support@floodalert.com</p>
+                    <p>Phone: 1-800-FLOOD-911</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ℹ️ About FloodAlert</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="about-section">
+                    <h3>Version 1.0.0</h3>
+                    <p>FloodAlert is a real-time flood detection and risk assessment system powered by advanced AI and satellite data.</p>
+                </div>
+                <div class="about-section">
+                    <h3>Features</h3>
+                    <ul>
+                        <li>Real-time flood risk analysis</li>
+                        <li>Interactive satellite and street maps</li>
+                        <li>Weather integration</li>
+                        <li>Saved favorites and search history</li>
+                        <li>Dark mode support</li>
+                    </ul>
+                </div>
+                <div class="about-section">
+                    <h3>Data Sources</h3>
+                    <p>OpenWeatherMap, USGS, Satellite Imagery, Government Surveys</p>
+                </div>
+                <div class="about-section">
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">© 2026 FloodAlert. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Search Section with History -->
+            <div class="search-section">
+                <h2 class="section-title">Search Location</h2>
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="Enter city or coordinates..."
+                        aria-label="Search for a location"
+                        autocomplete="off"
+                    >
+                    <button id="detectBtn" class="btn-primary">Detect Flood Risk</button>
+                </div>
+                
+                <!-- Recent Searches -->
+                <div id="recentSearches" class="recent-searches hidden">
+                    <p class="recent-title">📍 Recent Searches:</p>
+                    <div id="searchHistoryList" class="search-history-list"></div>
+                </div>
+
+                <!-- Risk Statistics Dashboard -->
+                <div id="statsCard" class="stats-card hidden">
+                    <h3>📊 Risk Analysis</h3>
+                    <div class="stat-item">
+                        <span>Overall Risk:</span>
+                        <span id="overallRisk" class="risk-badge">--</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Flood Height:</span>
+                        <span id="floodHeight">-- m</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Last Updated:</span>
+                        <span id="statsTime">--</span>
+                    </div>
+                    <button id="addToFavBtn" class="btn-secondary" style="width: 100%; margin-top: 12px;">❤️ Add to Favorites</button>
+                </div>
+            </div>
+
+            <!-- Favorites Section -->
+            <div class="favorites-section">
+                <h2 class="section-title">❤️ Favorites</h2>
+                <div id="favoritesList" class="favorites-list">
+                    <p class="empty-state">No saved locations yet</p>
+                </div>
+            </div>
+
+            <!-- Legend Section -->
+            <div class="legend-section">
+                <h2 class="section-title">Risk Levels</h2>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #d32f2f;"></div>
+                        <span>High Risk</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ff9800;"></div>
+                        <span>Medium Risk</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #4caf50;"></div>
+                        <span>Low Risk</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Loader (Hidden by default) -->
+            <div id="loader" class="loader hidden">
+                <div class="spinner"></div>
+                <p>Analyzing flood data...</p>
+            </div>
+
+            <!-- Floating Control Panel -->
+            <div class="floating-controls">
+                <button class="control-btn" id="mapStyleBtn" title="Map Style" data-style="street">🗺️</button>
+                <button class="control-btn" id="satelliteBtn" title="Satellite" data-style="satellite">🛰️</button>
+                <button class="control-btn" id="darkMapBtn" title="Dark Map" data-style="dark">🌑</button>
+                <div class="control-divider"></div>
+                <button class="control-btn" id="zoomInBtn" title="Zoom In">➕</button>
+                <button class="control-btn" id="zoomOutBtn" title="Zoom Out">➖</button>
+            </div>
+
+            <!-- Map Container -->
+            <div id="map" class="map-container"></div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 Flood Detection System | Authenticated User | <span id="lastUpdate">Last Updated: Just now</span></p>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script src="ui.js"></script>
+    <script src="markers.js"></script>
+    <script src="config.js"></script>\n    <script src="app.js"></script>
+</body>
+</html>

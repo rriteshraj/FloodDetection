@@ -1,18 +1,9 @@
-/* ===================================
-   Flood Detection System - Main App
-   =================================== */
-
-// Global Variables
 let map;
-let currentLocation = { lat: 20.5937, lng: 78.9629 }; // Default: India center
+let currentLocation = { lat: 20.5937, lng: 78.9629 }; 
 let floodOverlay;
-let floodRegions = []; // Store current flood regions
-let floodLayer = L.featureGroup(); // Layer for all flood regions
-let currentDetectionData = null; // Store current detection data for reports
-
-/* ===================================
-   INITIALIZATION
-   =================================== */
+let floodRegions = []; 
+let floodLayer = L.featureGroup(); 
+let currentDetectionData = null; 
 
 document.addEventListener('DOMContentLoaded', () => {
     // Check if user is authenticated before initializing map
@@ -27,10 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
-
-/* ===================================
-   MAP INITIALIZATION
-   =================================== */
 
 function initializeMap() {
     // Initialize Leaflet Map
@@ -50,10 +37,6 @@ function initializeMap() {
 
     console.log('✓ Map initialized with coordinates:', currentLocation);
 }
-
-/* ===================================
-   RENDER FLOOD REGIONS ON MAP
-   =================================== */
 
 function renderFloodRegions(regions, searchLat, searchLon) {
     // Clear previous regions
@@ -150,10 +133,6 @@ function addMarker(lat, lng, title = 'Location') {
     console.log(`✓ Marker added at ${lat}, ${lng}`);
 }
 
-/* ===================================
-   DISPLAY REGION STATISTICS
-   =================================== */
-
 function displayRegionStats(responseData) {
     const { place, latitude, longitude, total_regions, region_summary, flood_regions } = responseData;
 
@@ -166,39 +145,22 @@ function displayRegionStats(responseData) {
         heading.innerHTML = `<div style="background: linear-gradient(135deg, #0077be 0%, #0095d5 100%); color: white; padding: 12px; border-radius: 8px; margin: -16px -16px 12px -16px; text-align: center; font-size: 1.3rem; letter-spacing: 0.5px;">${place.toUpperCase()}</div>`;
     }
 
-    // Update overall risk
-    const riskElement = document.getElementById('overallRisk');
-    let riskText = '';
-    let riskColor = '#4caf50';
+const riskElement = document.getElementById('overallRisk');
 
-    if (region_summary.high_risk > 0) {
-        riskText = `🔴 ${region_summary.high_risk} HIGH RISK`;
-        riskColor = '#dc2626';
-    } else if (region_summary.medium_risk > 0) {
-        riskText = `🟡 ${region_summary.medium_risk} MEDIUM RISK`;
-        riskColor = '#ea580c';
-    } else if (region_summary.low_risk > 0) {
-        riskText = `🟢 ${region_summary.low_risk} LOW RISK`;
-        riskColor = '#16a34a';
-    } else {
-        riskText = '✓ SAFE';
-        riskColor = '#16a34a';
-    }
-
+if (riskElement) {
     riskElement.textContent = riskText;
     riskElement.style.color = riskColor;
     riskElement.style.fontWeight = 'bold';
+}
 
-    // Update stats time
-    const now = new Date().toLocaleTimeString();
-    document.getElementById('statsTime').textContent = now;
+const statsTimeElement = document.getElementById('statsTime');
+
+if (statsTimeElement) {
+    statsTimeElement.textContent = new Date().toLocaleTimeString();
+}
 
     console.log('✓ Region statistics updated:', region_summary);
 }
-
-/* ===================================
-   POINT IN POLYGON ALGORITHM
-   =================================== */
 
 function isPointInPolygon(point, polygon) {
     const [lat, lng] = point;
@@ -217,9 +179,6 @@ function isPointInPolygon(point, polygon) {
     return inside;
 }
 
-/* ===================================
-   UPDATE INFO CARD
-   =================================== */
 
 function updateInfoCard(lat, lng, locationName = 'Selected Location') {
     document.getElementById('infoLocation').textContent = locationName;
@@ -230,10 +189,6 @@ function updateInfoCard(lat, lng, locationName = 'Selected Location') {
     document.getElementById('infoRisk').style.fontWeight = 'bold';
 }
 
-/* ===================================
-   SHOW/HIDE LOADER
-   =================================== */
-
 function showLoader() {
     document.getElementById('loader').classList.remove('hidden');
 }
@@ -242,9 +197,6 @@ function hideLoader() {
     document.getElementById('loader').classList.add('hidden');
 }
 
-/* ===================================
-   EVENT LISTENERS
-   =================================== */
 
 function addEventListeners() {
     const searchInput = document.getElementById('searchInput');
@@ -276,11 +228,6 @@ function addEventListeners() {
 
     console.log('✓ Event listeners attached');
 }
-
-/* ===================================
-   HANDLE DETECT BUTTON CLICK
-   =================================== */
-
 async function handleDetectClick() {
     showLoader();
 
@@ -358,9 +305,6 @@ async function handleDetectClick() {
     }
 }
 
-/* ===================================
-   UTILITY FUNCTIONS
-   =================================== */
 
 function updateLastUpdate() {
     const now = new Date();

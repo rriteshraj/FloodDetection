@@ -21,10 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initializeMap() {
     // Initialize Leaflet Map
-    map = L.map('map').setView(
-        [currentLocation.lat, currentLocation.lng],
-        5
-    );
+   map = L.map('map', {
+    zoomControl: false
+}).setView(
+    [currentLocation.lat, currentLocation.lng],
+    5
+);
 
     // Initialize map styles and controls
     initializeMapStyle();
